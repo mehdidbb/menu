@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Menu Plage Privée</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Open+Sans&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+      background: url('https://i.ibb.co/9HHbfzyL/img1.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* Effet parallaxe pour le fond */
+    .parallax-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 120%;
+      height: 120%;
+      background: url('https://i.ibb.co/9HHbfzyL/img1.png') no-repeat center center;
+      background-size: cover;
+      z-index: -1;
+      transform: translateZ(0);
+      will-change: transform;
+    }
+
+    .overlay {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 60px 20px 100px;
+      min-height: 100vh;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 48px;
+      font-family: 'Pacifico', cursive;
+      margin-bottom: 40px;
+      color: #ffe;
+      text-shadow: 2px 2px 4px #000;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Effet de décryptage */
+    .title.decrypting {
+      animation: glitch 0.1s infinite;
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    .title::before {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      color: #a0a0a0;
+      z-index: -1;
+      animation: glitch-shadow 0.15s infinite;
+    }
+
+    .title::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      color: #666666;
+      z-index: -2;
+      animation: glitch-shadow 0.1s infinite reverse;
+    }
+
+    @keyframes glitch-shadow {
+      0% { transform: translate(0); }
+      20% { transform: translate(-1px, 1px); }
+      40% { transform: translate(-1px, -1px); }
+      60% { transform: translate(1px, 1px); }
+      80% { transform: translate(1px, -1px); }
+      100% { transform: translate(0); }
+    }
+
+    /* Style du curseur clignotant */
+    .cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1.2em;
+      background-color: #cccccc;
+      margin-left: 5px;
+      animation: blink 1s infinite;
+      box-shadow: 0 0 8px rgba(204, 204, 204, 0.6);
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    /* Section Activités Nautiques */
+    .activities-section {
+      max-width: 1200px;
+      margin: 0 auto 50px;
+      position: relative;
+    }
+
+    .activities-title {
+      text-align: center;
+      font-size: 36px;
+      font-family: 'Pacifico', cursive;
+      color: #00d4aa;
+      text-shadow: 2px 2px 4px #000;
+      margin-bottom: 30px;
+    }
+
+    .id-notice {
+      background: linear-gradient(135deg, #ff416c, #ff4757);
+      color: white;
+      padding: 12px 25px;
+      border-radius: 25px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 16px;
+      margin: 0 auto 25px;
+      max-width: 400px;
+      box-shadow: 0 8px 25px rgba(255, 65, 108, 0.4);
+      animation: pulse 2s infinite;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .activities-container {
+      position: relative;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 20px 0;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,212,170,0.8) rgba(255,255,255,0.1);
+    }
+
+    .activities-container::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .activities-container::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+    }
+
+    .activities-container::-webkit-scrollbar-thumb {
+      background: linear-gradient(90deg, #00d4aa, #007b5e);
+      border-radius: 10px;
+    }
+
+    .activities-slider {
+      display: flex;
+      gap: 25px;
+      width: max-content;
+      padding: 10px;
+    }
+
+    .activity-card {
+      min-width: 380px;
+      height: 280px;
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      flex-shrink: 0;
+      transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+      backface-visibility: hidden;
+    }
+
+    .activity-card:hover {
+      transform: perspective(1000px) rotateX(-5deg) rotateY(5deg) translateY(-15px) scale(1.08);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+      z-index: 10;
+    }
+
+    .activity-card:hover .activity-bg {
+      transform: scale(1.1) rotate(1deg);
+    }
+
+    .activity-card:hover .activity-overlay {
+      background: linear-gradient(45deg, rgba(0,0,0,0.6), rgba(0,123,191,0.6));
+    }
+
+    .activity-card:hover .activity-name {
+      transform: translateY(-5px);
+      text-shadow: 3px 3px 8px rgba(0,0,0,0.9);
+    }
+
+    .activity-card:hover .activity-schedule {
+      transform: scale(1.1) translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,212,170,0.5);
+    }
+
+    .activity-card:hover .activity-prices {
+      transform: translateY(5px);
+    }
+
+    .activity-card:hover .price-highlight {
+      color: #00ff88;
+      text-shadow: 0 0 10px rgba(0,255,136,0.5);
+    }
+
+    .activity-bg {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      transition: transform 0.4s ease;
+    }
+
+    .jetski-bg { background-image: url('https://i.ibb.co/p6XrGhVg/jetski.jpg'); }
+    .parachute-bg { background-image: url('https://i.ibb.co/PGk8PtJW/parachute.jpg'); }
+    .boat-bg { 
+      background-image: url('https://i.ibb.co/RTvHbX4d/boat.jpg');
+      background-position: center bottom;
+    }
+    .pedalo-bg { background-image: url('https://i.ibb.co/1G4Zw6jK/pedalo.jpg'); }
+    .banana-bg { background-image: url('https://i.ibb.co/7f48B6M/banana.jpg'); }
+
+    .activity-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(0,0,0,0.7), rgba(0,123,191,0.4));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      transition: background 0.4s ease;
+    }
+
+    .activity-name {
+      font-family: 'Pacifico', cursive;
+      font-size: 28px;
+      margin-bottom: 12px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+      transition: all 0.4s ease;
+    }
+
+    .activity-schedule {
+      background: rgba(0,212,170,0.9);
+      padding: 8px 18px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      transition: all 0.4s ease;
+    }
+
+    .activity-prices {
+      font-size: 16px;
+      line-height: 1.6;
+      transition: transform 0.4s ease;
+    }
+
+    .price-highlight {
+      color: #ffd700;
+      font-weight: bold;
+      transition: all 0.4s ease;
+    }
+
+    .morning-only {
+      background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+      color: #2c3e50;
+    }
+
+    /* Menu Restaurant avec effet parallaxe */
+    .menu-section {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .block {
+      background-color: rgba(255, 255, 255, 0.85);
+      color: #333;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    .block:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      background-color: rgba(255, 255, 255, 0.95);
+    }
+
+    .block h2 {
+      font-family: 'Pacifico', cursive;
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #007b5e;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dotted #999;
+      padding: 5px 0;
+      font-size: 16px;
+    }
+
+    .spacer {
+      visibility: hidden;
+    }
+
+    .footer-logo {
+      position: fixed;
+      bottom: 20px;
+      right: 30px;
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #000;
+      font-family: 'Pacifico', cursive;
+      padding: 10px 20px;
+      border-radius: 15px;
+      font-size: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    .footer-logo::after {
+      content: " ★★★★";
+      color: gold;
+      font-size: 22px;
+      margin-left: 10px;
+    }
+
+    @media screen and (max-width: 768px) {
+      .menu-section {
+        grid-template-columns: 1fr;
+      }
+      .footer-logo {
+        position: relative;
+        margin-top: 40px;
+        text-align: center;
+        display: block;
+      }
+      .activity-card {
+        min-width: 250px;
+        height: 180px;
+      }
+      .activity-name {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="parallax-bg"></div>
+  <div class="overlay">
+    <div class="title" id="main-title" data-text="Menu - Plage Privée"></div>
+    
+    <!-- Section Activités Nautiques -->
+    <div class="activities-section">
+      <h2 class="activities-title">🌊 Activités Nautiques 🌊</h2>
+      
+      <div class="activities-container">
+        <div class="activities-slider">
+          
+          <div class="activity-card">
+            <div class="activity-bg jetski-bg">
+              <div class="activity-overlay">
+                <div class="activity-name">JET SKI 🏍️</div>
+                <div class="activity-schedule">⏰ 9H - 20H</div>
+                <div class="activity-prices">
+                  15min: <span class="price-highlight">5,000 DA</span><br>
+                  30min: <span class="price-highlight">8,000 DA</span><br>
+                  1h: <span class="price-highlight">15,000 DA</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="activity-card">
+            <div class="activity-bg parachute-bg">
+              <div class="activity-overlay">
+                <div class="activity-name">PARACHUTE 🪂</div>
+                <div class="activity-schedule morning-only">🌅 Matinée uniquement</div>
+                <div class="activity-prices">
+                  15min: <span class="price-highlight">15,000 DA</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="activity-card">
+            <div class="activity-bg boat-bg">
+              <div class="activity-overlay">
+                <div class="activity-name">BALADE BATEAUX ⛵</div>
+                <div class="activity-schedule">🌊 Toute la journée</div>
+                <div class="activity-prices">
+                  20min: <span class="price-highlight">5,000 DA</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="activity-card">
+            <div class="activity-bg pedalo-bg">
+              <div class="activity-overlay">
+                <div class="activity-name">PÉDALO 🚣</div>
+                <div class="activity-schedule">⏰ 9H - 20H</div>
+                <div class="activity-prices">
+                  1h: <span class="price-highlight">1,000 DA</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="activity-card">
+            <div class="activity-bg banana-bg">
+              <div class="activity-overlay">
+                <div class="activity-name">BANANE 🍌</div>
+                <div class="activity-schedule morning-only">🌅 Matinée uniquement</div>
+                <div class="activity-prices">
+                  15min: <span class="price-highlight">500 DA</span><br>
+                  <small>(par personne)</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Duplication supprimée pour le contrôle manuel -->
+
+        </div>
+      </div>
+      
+      <div class="id-notice">
+        🆔 CARTE D'IDENTITÉ OBLIGATOIRE MERCI
+      </div>
+    </div>
+
+    <!-- Menu Restaurant Original -->
+    <div class="menu-section">
+      <div class="spacer"></div>
+      <div class="block">
+        <h2>CHEESE BURGER</h2>
+        <div class="item"><span>Simple</span><span>250 DA</span></div>
+        <div class="item"><span>Double</span><span>350 DA</span></div>
+        <div class="item"><span>Triple</span><span>450 DA</span></div>
+      </div>
+
+      <div class="block">
+        <h2>PIZZA COUVERTE</h2>
+        <div class="item"><span>Tranche pizza v.h</span><span>200 DA</span></div>
+        <div class="item"><span>Tranche pizza thon</span><span>150 DA</span></div>
+      </div>
+      <div class="spacer"></div>
+
+      <div class="spacer"></div>
+      <div class="block">
+        <h2>SANDWICH 3 FROMAGES</h2>
+        <div class="item"><span>Poulet</span><span>400 DA</span></div>
+        <div class="item"><span>Viande Hachée</span><span>500 DA</span></div>
+      </div>
+
+      <div class="block">
+        <h2>SUPPLÉMENT</h2>
+        <div class="item"><span>Gouda</span><span>100 DA</span></div>
+        <div class="item"><span>Gruyère</span><span>100 DA</span></div>
+        <div class="item"><span>Edam</span><span>100 DA</span></div>
+        <div class="item"><span>Rôti</span><span>100 DA</span></div>
+      </div>
+      <div class="spacer"></div>
+
+      <div class="spacer"></div>
+      <div class="block">
+        <h2>BOISSON</h2>
+        <div class="item"><span>Canette</span><span>100 DA</span></div>
+        <div class="item"><span>Eau minéral pm</span><span>40 DA</span></div>
+        <div class="item"><span>Eau minéral gm</span><span>80 DA</span></div>
+        <div class="item"><span>Jus de fruit</span><span>100 DA</span></div>
+        <div class="item"><span>Thé glacé</span><span>150 DA</span></div>
+      </div>
+
+      <div class="block">
+        <h2>BOISSONS CHAUDES</h2>
+        <div class="item"><span>Café expresso</span><span>250 DA</span></div>
+        <div class="item"><span>Double expresso</span><span>300 DA</span></div>
+        <div class="item"><span>Cappuccino</span><span></span></div>
+        <div class="item"><span>Thé ou infusion</span><span>150 DA</span></div>
+        <div class="item"><span>Chocolat chaud</span><span>200 DA</span></div>
+        <div class="item"><span>Café au lait</span><span>200 DA</span></div>
+      </div>
+      <div class="spacer"></div>
+
+      <div class="spacer"></div>
+      <div class="block">
+        <h2>COCKTAIL</h2>
+        <div class="item"><span>Virgin Mojito</span><span>400 DA</span></div>
+        <div class="item"><span>Tropical (fruits de saison)</span><span>300 DA</span></div>
+      </div>
+    </div>
+
+    <div class="footer-logo">Hotel Atlantid</div>
+  </div>
+
+  <script>
+    // Effet de décryptage du titre
+    function decryptTitle() {
+      const title = document.getElementById('main-title');
+      const originalText = "Menu - Plage Privée";
+      const chars = "!@#$%^&*()_+-=[]{}|;':\",./<>?`~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let iterations = 0;
+
+      title.classList.add('decrypting');
+
+      const interval = setInterval(() => {
+        title.innerHTML = originalText
+          .split("")
+          .map((char, index) => {
+            if (index < iterations) {
+              return originalText[index];
+            }
+            if (char === " " || char === "-") {
+              return char;
+            }
+            return chars[Math.floor(Math.random() * chars.length)];
+          })
+          .join("") + '<span class="cursor"></span>';
+
+        if (iterations >= originalText.length) {
+          clearInterval(interval);
+          title.classList.remove('decrypting');
+          title.innerHTML = originalText;
+          
+          // Petit effet final
+          setTimeout(() => {
+            title.style.textShadow = "0 0 20px #cccccc, 2px 2px 4px #000";
+            setTimeout(() => {
+              title.style.textShadow = "2px 2px 4px #000";
+            }, 500);
+          }, 200);
+        }
+
+        iterations += 1/3;
+      }, 50);
+    }
+
+    // Effet parallaxe au scroll
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      const parallaxBg = document.querySelector('.parallax-bg');
+      const speed = 0.5;
+      
+      if (parallaxBg) {
+        parallaxBg.style.transform = `translateY(${scrolled * speed}px)`;
+      }
+      
+      // Effet parallaxe pour les cartes d'activités
+      const activityCards = document.querySelectorAll('.activity-card');
+      activityCards.forEach((card, index) => {
+        const cardTop = card.offsetTop;
+        const cardHeight = card.offsetHeight;
+        const windowHeight = window.innerHeight;
+        
+        if (scrolled + windowHeight > cardTop && scrolled < cardTop + cardHeight) {
+          const progress = (scrolled + windowHeight - cardTop) / (windowHeight + cardHeight);
+          const translateY = (progress - 0.5) * 50;
+          card.style.transform = `translateY(${translateY}px)`;
+        }
+      });
+    });
+
+    // Animation au chargement
+    window.addEventListener('load', () => {
+      // Décryptage du titre
+      setTimeout(decryptTitle, 500);
+      
+      // Animation des cartes
+      const cards = document.querySelectorAll('.activity-card');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, (index * 200) + 2000); // Délai après le décryptage
+      });
+    });
+
+    // Style initial pour l'animation au chargement
+    document.addEventListener('DOMContentLoaded', () => {
+      const cards = document.querySelectorAll('.activity-card');
+      cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(50px)';
+        card.style.transition = 'all 0.6s ease';
+      });
+    });
+  </script>
+</body>
+</html>
